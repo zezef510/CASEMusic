@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="../assets/css/home/styles.css">
+    <link rel="stylesheet" href="../assets/css/home/playlist.css">
+    <link rel="stylesheet" href="../assets/css/home/upload.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    
+</head>
+
+<body>
+    <header>
+        <div class="menu_side">
+            <h1>Trang chủ</h1>
+
+            <div class="playlist">
+                <h4 onclick="goHomePage()" class="active"><span></span><i class="bi bi-music-note-beamed"></i> Trang chủ</h4>
+                <h4 id="playlist" class="active"><span></span><i class="bi bi-music-note-beamed"></i> Nhạc của tôi</h4>
+            </div>
+
+            <div class="menu_song">
+                <div class="menu-bar">
+                    <div class="add-playlist">
+                        <i onclick="showModal()" data-toggle="modal" data-target="#exampleModal"
+                            class="bi bi-plus-circle"> Thêm</i> 
+                    </div>
+                    <div class="sort-bar">
+                        <li class="sub-menu" style="display:block;">
+                            <a href="#" class="feat-btn">
+                                <i class='bx bx-sort-alt-2 icon'></i>
+                                <span class="text nav-text">Sắp xếp</span>
+                                <span class="fas fa-caret-down first"></span>
+                            </a>
+                            <ul class="feat-show">
+                                <li>
+                                    <a href="#" onclick="sortPlaylistByAsc()">
+                                        <i class='bx bx-id-card icon'></i>A->Z</a>
+                                </li>
+                                <li>
+                                    <a href="#" onclick="sortPlaylistByDesc()" id="sort">
+                                        <i class='bx bx-purchase-tag icon'></i>Z->A</a>
+                                </li>
+                            </ul>
+                        </li>
+                    </div>
+                </div>
+
+
+                <div id="playList" class="songList">
+                    <!-- Song PlayList -->
+                </div>
+
+            </div>
+        </div>
+
+        <div class="song_side">
+            <nav class="navBar">
+                <div class="search">
+                    <i class="bi bi-search"></i>
+                    <input onchange="formSearch()" id="search-input" type="search" placeholder="Tìm kiếm nhạc...">
+                </div>
+                <div id="user" class="user">
+                    <!-- User -->
+                </div>
+            </nav>
+            <div class="right">
+               
+                <div class="popular_song album">
+                    <div class="h4">
+                        <h4>Album thịnh hành</h4>
+                        <div class="btn_s">
+                            <i id="left_scroll" class="bi bi-arrow-left-short"></i>
+                            <i id="right_scroll" class="bi bi-arrow-right-short"></i>
+                        </div>
+                    </div>
+
+                    <div id="albums" class="pop_song">
+                        <!-- Album here -->
+                    </div>
+                </div>
+
+                <div class="playlist-songs-container">
+                    <div class="playlist-songs menu_song">
+                        <table id="songItem">
+                            <!-- Song List here -->
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="master_play">
+            <div class="wave">
+                <div class="wave1"></div>
+                <div class="wave1"></div>
+                <div class="wave1"></div>
+            </div>
+            <img src="../assets/images/HoaMinzy.jpg" id="poster_master_play">
+            <h5 id="title">Bật Tình Yêu Lên <br>
+                <div class="subtitle">Hòa Minzy</div>
+            </h5>
+            <div class="icon">
+                <i class="bi bi-skip-start-fill" id="back"></i>
+                <i class="bi bi-play-fill" id="masterPlay"></i>
+                <i class="bi bi-skip-end-fill" id="next"></i>
+            </div>
+            <span id="currentStart">0:00</span>
+            <div class="bar">
+                <input type="range" id="seek" min="0" value="0" max="100">
+                <div class="bar2" id="bar2"></div>
+                <div class="dot"></div>
+            </div>
+            <span id="currentEnd">0:00</span>
+
+            <div class="vol">
+                <i class="bi bi-volume-down-fill" id="vol_icon"></i>
+                <input type="range" id="vol" min="0" value="0" max="100">
+                <div class="vol_bar"></div>
+                <div class="dot" id="vol_dot"></div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Modal -->
+    <div id="modal-edit">
+        <!-- Modal Edit -->
+    </div>
+
+    
+    <!-- Modal LogOut -->
+    <div id="myModal" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-body">
+              <p>Bạn có muốn đăng xuất ?</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Không</button>
+              <button type="button" class="btn btn-primary yes" onclick="deleteCookie()">Có</button>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('load', function () {
+            // Kiểm tra xem có cookie "userId" hay không
+            const userId = getCookie("userId");
+
+            if (!userId) {
+                // Chuyển hướng đến trang khác
+                window.location.href = "sign.html";
+            }
+        });
+
+        // Hàm để lấy giá trị của một cookie
+        function getCookie(name) {
+            const value = "; " + document.cookie;
+            const parts = value.split("; " + name + "=");
+
+            if (parts.length === 2) {
+                return parts.pop().split(";").shift();
+            }
+        }
+
+    </script>
+    <script src="../assets/js/home/sort.js"></script>
+    <script src="../assets/js/home/app.js"></script>
+    <script src="../assets/js/home/home.js"></script>
+    <script src="../assets/js/home/addPlaylist.js"></script>
+
+    <script>
+        const playlistLink = document.getElementById("playlist");
+        playlistLink.addEventListener("click", function () {
+            window.location.href = "./playlist.html";
+        });
+    </script>
+
+    <script>
+        // function confirmDeleteCookie() {
+        //     if (confirm("Bạn có chắc chắn muốn đăng xuất không?")) {
+        //         deleteCookie();
+        //         window.location.href = "sign.html";
+        //     }
+        // }
+       
+    </script>
+
+    <!-- Add IMG -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.19.1/firebase-app.js";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDxG2vMNkqz1sf4UGAaMzcaq3lVdAN5C8M",
+            authDomain: "users-8f542.firebaseapp.com",
+            projectId: "users-8f542",
+            storageBucket: "users-8f542.appspot.com",
+            messagingSenderId: "351740883393",
+            appId: "1:351740883393:web:b9c6a3bba9f040cf3ebf40",
+            measurementId: "G-KN5Q9HHHL7"
+        };
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+    </script>
+
+    <script type="module">
+        import {
+            getStorage,
+            ref,
+            uploadBytesResumable,
+            getDownloadURL
+        } from "https://www.gstatic.com/firebasejs/9.19.1/firebase-storage.js";
+
+        const storage = getStorage();
+
+        // Create the file metadata
+        /** @type {any} */
+        const metadata = {
+            'jpg': 'images/jpg',
+            'jpeg': 'images/jpeg',
+            'png': 'images/png'
+        };
+
+
+        function uploadImage(e) {
+
+            var input = event.target;
+            if (input.files && input.files[0]) {
+                var fileName = input.files[0].name;
+                document.getElementById("file-name").textContent = fileName;
+            }
+
+            document.getElementById("image-upload").disabled = true
+            // let uploader = document.getElementById('uploader');
+            let file = e.target.files[0];
+
+            // Upload file and metadata to the object 'images/mountains.jpg'
+            const storageRef = ref(storage, 'images/' + file.name);
+            const uploadTask = uploadBytesResumable(storageRef, file, metadata);
+            document.getElementById("upload-progress").hidden = false;
+
+            // Listen for state changes, errors, and completion of the upload.
+            uploadTask.on('state_changed',
+                (snapshot) => {
+                    // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    console.log('Upload is ' + progress + '% done');
+                    let progressBar = document.getElementById("upload-progress");
+                    let progressImg = document.querySelector(".progress");
+                    progressBar.style.width = Math.round(progress) + "%";
+                    progressBar.innerHTML = Math.round(progress) + "%";
+                    progressImg.style.margin = "0px 0px 10px 0px";
+                    var divElement = document.querySelector('.image-url');
+                    divElement.removeAttribute('hidden');
+                    const inputElement = document.getElementById('image');
+                    inputElement.readOnly = true;
+                    switch (snapshot.state) {
+                        case 'paused':
+                            console.log('Upload is paused');
+                            break;
+                        case 'running':
+                            console.log('Upload is running');
+                            break;
+                    }
+                },
+                (error) => {
+                    // A full list of error codes is available at
+                    // https://firebase.google.com/docs/storage/web/handle-errors
+                    switch (error.code) {
+                        case 'storage/unauthorized':
+                            // User doesn't have permission to access the object
+                            break;
+                        case 'storage/canceled':
+                            // User canceled the upload
+                            break;
+
+                        // ...
+
+                        case 'storage/unknown':
+                            // Unknown error occurred, inspect error.serverResponse
+                            break;
+                    }
+                },
+                () => {
+                    // Upload completed successfully, now we can get the download URL
+                    getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                        console.log('File available at', downloadURL);
+                        let image = document.getElementById('image');
+                        image.value = downloadURL;
+                        document.getElementById('image-url').src = downloadURL;
+                        // pushNewIMG(downloadURL)
+                        setTimeout(() => {
+                            document.getElementById("image-upload").disabled = false;
+                        }, 500)
+                    });
+                }
+            );
+        }
+
+        function uploadCoverPhoto(e) {
+
+            var input = event.target;
+            if (input.files && input.files[0]) {
+                var fileName = input.files[0].name;
+                document.getElementById("file-name-cover").textContent = fileName;
+            }
+
+            document.getElementById("cover-upload").disabled = true
+            // let uploader = document.getElementById('uploader');
+            let file = e.target.files[0];
+
+            // Upload file and metadata to the object 'images/mountains.jpg'
+            const storageRef = ref(storage, 'images/' + file.name);
+            const uploadTask = uploadBytesResumable(storageRef, file, metadata);
+            document.getElementById("upload-progress-cover").hidden = false;
+
+            // Listen for state changes, errors, and completion of the upload.
+            uploadTask.on('state_changed',
+                (snapshot) => {
+                    // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    console.log('Upload is ' + progress + '% done');
+                    let progressBar = document.getElementById("upload-progress-cover");
+                    let progressImg = document.querySelector(".progress-cover");
+                    progressBar.style.width = Math.round(progress) + "%";
+                    progressBar.innerHTML = Math.round(progress) + "%";
+                    progressImg.style.margin = "0px 0px 10px 0px";
+                    var divElement = document.querySelector('.cover-url');
+                    divElement.removeAttribute('hidden');
+                    const inputElement = document.getElementById('cover_photo');
+                    inputElement.readOnly = true;
+                    switch (snapshot.state) {
+                        case 'paused':
+                            console.log('Upload is paused');
+                            break;
+                        case 'running':
+                            console.log('Upload is running');
+                            break;
+                    }
+                },
+                (error) => {
+                    // A full list of error codes is available at
+                    // https://firebase.google.com/docs/storage/web/handle-errors
+                    switch (error.code) {
+                        case 'storage/unauthorized':
+                            // User doesn't have permission to access the object
+                            break;
+                        case 'storage/canceled':
+                            // User canceled the upload
+                            break;
+
+                        // ...
+
+                        case 'storage/unknown':
+                            // Unknown error occurred, inspect error.serverResponse
+                            break;
+                    }
+                },
+                () => {
+                    // Upload completed successfully, now we can get the download URL
+                    getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                        console.log('File available at', downloadURL);
+                        let image = document.getElementById('cover_photo');
+                        image.value = downloadURL;
+                        document.getElementById('cover-url').src = downloadURL;
+                        // pushNewIMG(downloadURL)
+                        setTimeout(() => {
+                            document.getElementById("cover-upload").disabled = false;
+                        }, 500)
+                    });
+                }
+            );
+        }
+
+        window.uploadImage = uploadImage;
+        window.uploadCoverPhoto = uploadCoverPhoto;
+    </script>
+</body>
+
+</html>
