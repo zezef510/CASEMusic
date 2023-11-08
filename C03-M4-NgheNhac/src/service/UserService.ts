@@ -18,7 +18,6 @@ class UserService {
                 username: user.username
             }
         });
-
         if (userObj && user.username === userObj.username) {
             return `Account '${user.username}' already exists`;
         } else {
@@ -27,20 +26,23 @@ class UserService {
     }
 
     checkUser = async (user) => {
-        let userFind = await this.userRepository.findOne({
-            where: {
-                username: user.username,
-            },
-        });
-
+        let userFind = await this.userRepository.findOneBy({ username: user.username });
         if (!userFind) {
-            return 'User does not exist';
+            return { error: 'User is not exist' };
         } else {
-            if (user.password == userFind.password) {
-                const userId = userFind.id; // Lấy ra ID của người dùng
-                return `${userId}`;
+            let passWordCompare =  bcrypt.compare(user.password, userFind.password);
+            if (passWordCompare) {
+                let payload = {
+                    idUser: userFind.id,
+                    username: userFind.username,
+                    role: 'admin'
+                };
+                let token = jwt.sign(payload, SECRET, {
+                    expiresIn: 36000 * 10 * 100,
+                });
+                return { token, username: userFind.username, id: userFind.id };
             } else {
-                return 'Password is wrong';
+                return { error: 'Password is wrong' };
             }
         }
     };
